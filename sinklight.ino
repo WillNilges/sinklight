@@ -1,14 +1,9 @@
-#include <Servo.h> 
-
-int servoPin = 2; // Pin to communicate with the servo
-
-Servo servo;
-
-int servoAngle = 0;   // servo position in degrees
-
 // defines pins numbers
 const int trigPin = 3;
 const int echoPin = 4;
+
+// define relay pin number
+const int relayPin = 5;
 
 // defines variables
 long duration;
@@ -16,17 +11,18 @@ int distance;
 
 bool is_present = false; // Is a human present?
 
-int presence_distance = 100; // How far away a human has to be to trigger the servo.
+int presence_distance = 200; // How far away a human has to be to trigger the servo.
 
 
 void setup()
 {
   Serial.begin(9600);
-  servo.attach(servoPin);
   pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
   pinMode(echoPin, INPUT); // Sets the echoPin as an Input
 
-  pinMode(13, OUTPUT);
+  pinMode(relayPin, OUTPUT);
+
+  pinMode(13, OUTPUT); // Use the onboard light to indicate when a human is detected.
 }
 
 
@@ -49,18 +45,10 @@ void loop()
   
   if (distance < presence_distance && is_present == false) {
     is_present = true;
-    digitalWrite(13, HIGH);
-    servo.write(80); //on
-    delay(500);
-    servo.write(50);
-    delay(2000);
+    digitalWrite(relayPin, HIGH);
   } else if (distance >= presence_distance && is_present == true) {
     is_present = false;
-    digitalWrite(13, LOW);
-    servo.write(25); //off
-    delay(500);
-    servo.write(50);
-    delay(2000);
+    digitalWrite(relayPin, LOW);
   }
-  delay(500);
+  delay(2000);
 }
